@@ -25,6 +25,9 @@ func TestAddList(t *testing.T) {
 
 	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
 		Name: "Test",
+		Tasks: []*pb.Task{
+			{Title: "test"},
+		},
 	}})
 
 	if err != nil {
@@ -39,6 +42,23 @@ func TestAddList(t *testing.T) {
 	if len(lists.GetLists()) == 0 || lists.GetLists()[0].Name != "Test" {
 		t.Errorf("Bad list pull: %v", lists)
 	}
+}
+
+func TestAddListProcessFail(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.ErrorCode = codes.DataLoss
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "Test",
+		Tasks: []*pb.Task{
+			{Title: "test"},
+		},
+	}})
+
+	if err == nil {
+		t.Errorf("Should have failed here: %v", err)
+	}
+
 }
 
 func TestAddListNameClash(t *testing.T) {
