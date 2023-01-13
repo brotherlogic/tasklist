@@ -22,6 +22,8 @@ func InitTestServer() *Server {
 
 func TestAddList(t *testing.T) {
 	s := InitTestServer()
+	s.dclient.ErrorCode = make(map[string]codes.Code)
+	s.dclient.ErrorCode[CONFIG_KEY] = codes.InvalidArgument
 
 	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
 		Name: "Test",
@@ -29,6 +31,7 @@ func TestAddList(t *testing.T) {
 			{Title: "test"},
 		},
 	}})
+	delete(s.dclient.ErrorCode, CONFIG_KEY)
 
 	if err != nil {
 		t.Errorf("Failed to add list: %v", err)
