@@ -61,5 +61,10 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 
 	config.Lists = append(config.Lists, req.GetAdd())
 
+	err = s.processTaskLists(ctx, config)
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.AddTaskListResponse{}, s.saveConfig(ctx, config)
 }

@@ -20,6 +20,7 @@ message Task {
         TASK_COMPLETE = 3;
     }
     State state = 4;
+    int32 index = 5;
 }
 
 message TaskList {
