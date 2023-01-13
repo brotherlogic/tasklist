@@ -4,6 +4,10 @@ package tasklist;
 
 option go_package = "github.com/brotherlogic/tasklist/proto";
 
+message Config {
+    repeated TaskList lists = 1;
+}
+
 message Task {
     string title = 1;
     string job = 2;
@@ -20,4 +24,15 @@ message Task {
 
 message TaskList {
     repeated Task tasks = 1;
+    string name = 2;
 }
+
+message AddTaskListRequest {
+    TaskList add = 1;
+}
+
+message AddTaskListResponse {}
+
+service TaskListService {
+    rpc AddTaskList (AddTaskListRequest) returns (AddTaskListResponse);
+  }
