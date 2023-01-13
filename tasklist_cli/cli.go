@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -40,6 +41,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("Bad Add: %v", err)
 		}
+	default:
+		fmt.Printf("Unknown command: %v\n", os.Args[1])
 	}
 
 }
