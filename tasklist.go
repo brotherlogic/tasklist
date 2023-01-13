@@ -16,6 +16,7 @@ import (
 
 	pbg "github.com/brotherlogic/goserver/proto"
 	"github.com/brotherlogic/goserver/utils"
+	pb "github.com/brotherlogic/tasklist/proto"
 )
 
 // Server main server type
@@ -37,7 +38,7 @@ func Init() *Server {
 
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
-
+	pb.RegisterTaskListServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy
