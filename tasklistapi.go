@@ -32,6 +32,15 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 	return err
 }
 
+func (s *Server) GetTaskLists(ctx context.Context, req *pb.GetTaskListsRequest) (*pb.GetTaskListsResponse, error) {
+	config, err := s.readConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetTaskListsResponse{Lists: config.GetLists()}, nil
+}
+
 func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*pb.AddTaskListResponse, error) {
 	config, err := s.readConfig(ctx)
 	if err != nil {
