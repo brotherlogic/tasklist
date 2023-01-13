@@ -58,3 +58,23 @@ func TestAddListNameClash(t *testing.T) {
 		t.Errorf("should have reported already exists: %v", err)
 	}
 }
+
+func TestAddListFailReads(t *testing.T) {
+	s := InitTestServer()
+	s.dclient.ErrorCode = make(map[string]codes.Code)
+	s.dclient.ErrorCode[CONFIG_KEY] = codes.DataLoss
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "Test",
+	}})
+
+	if err == nil {
+		t.Errorf("Should have failed: %v", err)
+	}
+
+	_, err = s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err == nil {
+		t.Errorf("Should have failed on gettasklists: %v", err)
+	}
+
+}
