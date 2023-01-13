@@ -1,1 +1,3 @@
 tasklist
+tasklist_cli/tasklist_cli
+tasklist_cli/*.txt

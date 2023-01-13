@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/brotherlogic/goserver"
 	"golang.org/x/net/context"
@@ -14,6 +15,7 @@ import (
 	github_client "github.com/brotherlogic/githubcard/client"
 
 	pbg "github.com/brotherlogic/goserver/proto"
+	"github.com/brotherlogic/goserver/utils"
 )
 
 // Server main server type
@@ -77,6 +79,10 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
+	server.readConfig(ctx)
+	cancel()
 
 	fmt.Printf("%v", server.Serve())
 }
