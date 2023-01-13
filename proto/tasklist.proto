@@ -33,6 +33,13 @@ message AddTaskListRequest {
 
 message AddTaskListResponse {}
 
+message GetTaskListsRequest {}
+
+message GetTaskListsResponse {
+    repeated TaskList lists = 1;
+}
+
 service TaskListService {
     rpc AddTaskList (AddTaskListRequest) returns (AddTaskListResponse);
+    rpc GetTaskLists (GetTaskListsRequest) returns (GetTaskListsResponse);
   }
