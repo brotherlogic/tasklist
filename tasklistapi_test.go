@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	dstore_client "github.com/brotherlogic/dstore/client"
+	github_client "github.com/brotherlogic/githubcard/client"
 
 	pb "github.com/brotherlogic/tasklist/proto"
 )
@@ -15,6 +16,7 @@ import (
 func InitTestServer() *Server {
 	s := Init()
 	s.dclient = &dstore_client.DStoreClient{Test: true}
+	s.ghclient = &github_client.GHClient{Test: true}
 	return s
 }
 

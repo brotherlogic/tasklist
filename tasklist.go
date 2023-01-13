@@ -20,7 +20,7 @@ import (
 type Server struct {
 	*goserver.GoServer
 	dclient  *dstore_client.DStoreClient
-	ghclient *github_client.Client
+	ghclient *github_client.GHClient
 }
 
 // Init builds the server
@@ -29,6 +29,7 @@ func Init() *Server {
 		GoServer: &goserver.GoServer{},
 	}
 	s.dclient = &dstore_client.DStoreClient{Gs: s.GoServer}
+	s.ghclient = &github_client.GHClient{Gs: s.GoServer}
 	return s
 }
 
