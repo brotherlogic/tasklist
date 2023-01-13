@@ -20,6 +20,7 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 				issue, err := s.ghclient.AddIssue(ctx, &pbgh.Issue{
 					Title:   item.GetTitle(),
 					Service: item.GetJob(),
+					Body:    item.GetTitle(),
 				})
 				if err != nil {
 					return err
