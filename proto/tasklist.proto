@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package tasklist;
+
+option go_package = "github.com/brotherlogic/tasklist/proto";
+
+message Task {
+    string title = 1;
+    string job = 2;
+    int32 issue_number = 3;
+
+    enum State {
+        UNKNOWN = 0;
+        TASK_WAITING = 1;
+        TASK_IN_PROGRESS = 2;
+        TASK_COMPLETE = 3;
+    }
+    State state = 4;
+}
+
+message TaskList {
+    repeated Task tasks = 1;
+}
