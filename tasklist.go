@@ -10,12 +10,15 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	dstore_client "github.com/brotherlogic/dstore/client"
+
 	pbg "github.com/brotherlogic/goserver/proto"
 )
 
 // Server main server type
 type Server struct {
 	*goserver.GoServer
+	dclient *dstore_client.DStoreClient
 }
 
 // Init builds the server
@@ -23,6 +26,7 @@ func Init() *Server {
 	s := &Server{
 		GoServer: &goserver.GoServer{},
 	}
+	s.dclient = &dstore_client.DStoreClient{Gs: s.GoServer}
 	return s
 }
 

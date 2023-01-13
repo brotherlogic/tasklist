@@ -3,6 +3,7 @@ module github.com/brotherlogic/tasklist
 go 1.19
 
 require (
+	github.com/brotherlogic/dstore v0.0.0-20221020024352-82dbf152217e
 	github.com/brotherlogic/goserver v0.0.0-20230106225431-4d4abea9318a
 	golang.org/x/net v0.5.0
 	google.golang.org/grpc v1.52.0
@@ -14,7 +15,6 @@ require (
 	github.com/brotherlogic/buildserver v0.0.0-20221025153807-d37139fce57b // indirect
 	github.com/brotherlogic/datastore v0.0.0-20221025153738-d211d98ef920 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20221018184229-677603e3fbca // indirect
-	github.com/brotherlogic/dstore v0.0.0-20221020024352-82dbf152217e // indirect
 	github.com/brotherlogic/githubcard v0.0.0-20221024150514-c05d2f9cac31 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20221013043639-a2ec1f306ba6 // indirect
 	github.com/brotherlogic/keystore v0.0.0-20221025153610-f0da429b1237 // indirect
