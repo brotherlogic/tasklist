@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 
 	dstore_client "github.com/brotherlogic/dstore/client"
+	github_client "github.com/brotherlogic/githubcard/client"
 
 	pbg "github.com/brotherlogic/goserver/proto"
 )
@@ -18,7 +19,8 @@ import (
 // Server main server type
 type Server struct {
 	*goserver.GoServer
-	dclient *dstore_client.DStoreClient
+	dclient  *dstore_client.DStoreClient
+	ghclient *github_client.Client
 }
 
 // Init builds the server

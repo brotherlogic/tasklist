@@ -3,6 +3,7 @@ package main
 import (
 	"sort"
 
+	pbgh "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/tasklist/proto"
 
 	"golang.org/x/net/context"
@@ -16,7 +17,10 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 
 		for _, item := range list.GetTasks() {
 			if item.GetState() == pb.Task_UNKNOWN || item.GetState() == pb.Task_TASK_WAITING {
-				issue, err := s.BounceImmediateIssue(ctx, item.GetJob(), item.GetTitle(), item.GetTitle(), true)
+				issue, err := s.ghclient.AddIssue(ctx, &pbgh.Issue{
+					Title: item.GetTitle(),
+					Job:   item.GetJob(),
+				})
 				if err != nil {
 					return err
 				}
