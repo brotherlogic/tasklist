@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	dstore_client "github.com/brotherlogic/dstore/client"
 
@@ -34,5 +36,25 @@ func TestAddList(t *testing.T) {
 
 	if len(lists.GetLists()) == 0 || lists.GetLists()[0].Name != "Test" {
 		t.Errorf("Bad list pull: %v", lists)
+	}
+}
+
+func TestAddListNameClash(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "Test",
+	}})
+
+	if err != nil {
+		t.Errorf("Failed to add list: %v", err)
+	}
+
+	_, err = s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "Test",
+	}})
+
+	if status.Code(err) != codes.AlreadyExists {
+		t.Errorf("should have reported already exists: %v", err)
 	}
 }
