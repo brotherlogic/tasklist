@@ -28,7 +28,10 @@ func (s *Server) metrics(config *pb.Config) {
 func (s *Server) readConfig(ctx context.Context) (*pb.Config, error) {
 	data, err := s.dclient.Read(ctx, &dspb.ReadRequest{Key: CONFIG_KEY})
 	if err != nil {
-		return nil, err
+		if status.Code(err) != codes.InvalidArgument {
+			return nil, err
+		}
+		data = &dspb.ReadResponse{}
 	}
 
 	config := &pb.Config{}
