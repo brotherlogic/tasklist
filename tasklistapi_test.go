@@ -51,7 +51,8 @@ func TestAddListProcessFail(t *testing.T) {
 	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
 		Name: "Test",
 		Tasks: []*pb.Task{
-			{Title: "test"},
+			{Title: "test", Index: 1},
+			{Title: "test2", Index: 2},
 		},
 	}})
 
