@@ -14,6 +14,7 @@ import (
 	dstore_client "github.com/brotherlogic/dstore/client"
 	github_client "github.com/brotherlogic/githubcard/client"
 
+	pbgh "github.com/brotherlogic/githubcard/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
 	"github.com/brotherlogic/goserver/utils"
 	pb "github.com/brotherlogic/tasklist/proto"
@@ -39,6 +40,7 @@ func Init() *Server {
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
 	pb.RegisterTaskListServiceServer(server, s)
+	pbgh.RegisterGithubSubscriberServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy
