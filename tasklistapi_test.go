@@ -159,5 +159,23 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 	if number == 0 {
 		t.Errorf("Task was not updated: %v", lists)
 	}
+}
 
+func TestEmptyChange(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.ChangeUpdate(context.Background(), &pbgh.ChangeUpdateRequest{})
+	if status.Code(err) != codes.NotFound {
+		t.Errorf("Empty change should be not found: %v", err)
+	}
+}
+
+func TestBadLoad(t *testing.T) {
+	s := InitTestServer()
+	s.dclient.ErrorCode = map[string]codes.Code{CONFIG_KEY: codes.DataLoss}
+
+	_, err := s.ChangeUpdate(context.Background(), &pbgh.ChangeUpdateRequest{})
+	if status.Code(err) != codes.DataLoss {
+		t.Errorf("Bad load not plubmed throug: %v", err)
+	}
 }
