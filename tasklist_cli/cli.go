@@ -35,8 +35,10 @@ func main() {
 		lines := strings.Split(string(data), "\n")
 		req := &pb.TaskList{Name: lines[0]}
 		for i := 1; i < len(lines); i++ {
-			bits := strings.Split(lines[i], "|")
-			req.Tasks = append(req.Tasks, &pb.Task{Title: bits[1], Job: bits[0], Index: int32(i)})
+			if len(strings.TrimSpace(lines[i])) > 0 {
+				bits := strings.Split(lines[i], "|")
+				req.Tasks = append(req.Tasks, &pb.Task{Title: bits[1], Job: bits[0], Index: int32(i)})
+			}
 		}
 		_, err = client.AddTaskList(ctx, &pb.AddTaskListRequest{Add: req})
 		if err != nil {

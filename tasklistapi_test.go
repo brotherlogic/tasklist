@@ -139,6 +139,19 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 		t.Fatalf("Issue was not given a number")
 	}
 
+	number = int32(0)
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetTitle() == "Task 2" {
+				number = (task.GetIssueNumber())
+			}
+		}
+	}
+
+	if number != 0 {
+		t.Fatalf("Second task was given a number")
+	}
+
 	s.ChangeUpdate(context.Background(), &pbgh.ChangeUpdateRequest{Issue: &pbgh.Issue{Title: "Task 1", Service: "home", Number: number}})
 
 	// Task 2 should have been assigned a number
