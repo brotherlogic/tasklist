@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"testing"
 
 	"golang.org/x/net/context"
@@ -126,7 +127,7 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 		t.Fatalf("Badd list: %v", err)
 	}
 
-	number := int32(-1)
+	number := int32(0)
 	for _, list := range lists.GetLists() {
 		for _, task := range list.GetTasks() {
 			if task.GetTitle() == "Task 1" {
@@ -135,7 +136,7 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 		}
 	}
 
-	if number == -1 {
+	if number == 0 {
 		t.Fatalf("Issue was not given a number")
 	}
 
@@ -147,7 +148,7 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 		t.Fatalf("Badd list: %v", err)
 	}
 
-	number = int32(-1)
+	number = int32(0)
 	for _, list := range lists.GetLists() {
 		for _, task := range list.GetTasks() {
 			if task.GetTitle() == "Task 2" {
@@ -156,8 +157,10 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 		}
 	}
 
-	if number == -1 {
+	if number == 0 {
 		t.Errorf("Task was not updated: %v", lists)
 	}
+
+	log.Printf("Aha: %v", lists)
 
 }

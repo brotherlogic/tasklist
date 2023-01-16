@@ -18,9 +18,10 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 		for _, item := range list.GetTasks() {
 			if item.GetState() == pb.Task_UNKNOWN || item.GetState() == pb.Task_TASK_WAITING {
 				issue, err := s.ghclient.AddIssue(ctx, &pbgh.Issue{
-					Title:   item.GetTitle(),
-					Service: item.GetJob(),
-					Body:    item.GetTitle(),
+					Title:       item.GetTitle(),
+					Service:     item.GetJob(),
+					Body:        item.GetTitle(),
+					Subscribers: []string{"tasklist"},
 				})
 				if err != nil {
 					return err

@@ -89,6 +89,20 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 	return &pb.AddTaskListResponse{}, s.saveConfig(ctx, config)
 }
 
-func (s *Server) ChangeUpdate(ctx context.Context, req *pbgh.ChangeUpdateRequest) (*pb.ChangeUpdateResponse, error) {
-	return &pbgh.ChangeUpdateResponse{}, nil
+func (s *Server) ChangeUpdate(ctx context.Context, req *pbgh.ChangeUpdateRequest) (*pbgh.ChangeUpdateResponse, error) {
+	config, err := s.readConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, list := range config.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.Job == req.GetIssue().GetService() && task.IssueNumber == req.GetIssue().GetNumber() {
+				task.State = pb.Task_TASK_COMPLETE
+				s.processTaskLists(ctx, config)
+				return &pbgh.ChangeUpdateResponse{}, s.saveConfig(ctx, config)
+			}
+		}
+	}
+	return nil, status.Errorf(codes.NotFound, "Issue %v/%v was not found", req.GetIssue().GetService(), req.GetIssue().GetNumber())
 }
