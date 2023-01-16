@@ -139,16 +139,16 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 		t.Fatalf("Issue was not given a number")
 	}
 
-	number = int32(0)
+	nnumber := int32(0)
 	for _, list := range lists.GetLists() {
 		for _, task := range list.GetTasks() {
 			if task.GetTitle() == "Task 2" {
-				number = (task.GetIssueNumber())
+				nnumber = (task.GetIssueNumber())
 			}
 		}
 	}
 
-	if number != 0 {
+	if nnumber != 0 {
 		t.Fatalf("Second task was given a number")
 	}
 

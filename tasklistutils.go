@@ -29,6 +29,11 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 				item.State = pb.Task_TASK_IN_PROGRESS
 				item.IssueNumber = issue.GetNumber()
 			}
+
+			// Stop at the first task in progress
+			if item.GetState() == pb.Task_TASK_IN_PROGRESS {
+				break
+			}
 		}
 	}
 
