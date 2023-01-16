@@ -10,6 +10,7 @@ import (
 	dstore_client "github.com/brotherlogic/dstore/client"
 	github_client "github.com/brotherlogic/githubcard/client"
 
+	pbgh "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/tasklist/proto"
 )
 
@@ -101,6 +102,62 @@ func TestAddListFailReads(t *testing.T) {
 	_, err = s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
 	if err == nil {
 		t.Errorf("Should have failed on gettasklists: %v", err)
+	}
+}
+
+func TestMoveToNextItemOnChange(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "Test",
+		Tasks: []*pb.Task{
+			&pb.Task{Index: 1, Title: "Task 1", Job: "home"},
+			&pb.Task{Index: 2, Title: "Task 2", Job: "home"},
+		},
+	}})
+
+	if err != nil {
+		t.Fatalf("Bad add: %v", err)
+	}
+
+	// Task 1 should have been assigned a number
+	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Badd list: %v", err)
+	}
+
+	number := int32(-1)
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetTitle() == "Task 1" {
+				number = (task.GetIssueNumber())
+			}
+		}
+	}
+
+	if number == -1 {
+		t.Fatalf("Issue was not given a number")
+	}
+
+	s.ChangeUpdate(context.Background(), &pbgh.ChangeUpdateRequest{Issue: &pbgh.Issue{Title: "Task 1", Service: "home", Number: number}})
+
+	// Task 2 should have been assigned a number
+	lists, err = s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Badd list: %v", err)
+	}
+
+	number = int32(-1)
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetTitle() == "Task 2" {
+				number = (task.GetIssueNumber())
+			}
+		}
+	}
+
+	if number == -1 {
+		t.Errorf("Task was not updated: %v", lists)
 	}
 
 }

@@ -7,10 +7,12 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	dspb "github.com/brotherlogic/dstore/proto"
-	pb "github.com/brotherlogic/tasklist/proto"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+
+	dspb "github.com/brotherlogic/dstore/proto"
+	pbgh "github.com/brotherlogic/githubcard/proto"
+	pb "github.com/brotherlogic/tasklist/proto"
 )
 
 var (
@@ -85,4 +87,8 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 	}
 
 	return &pb.AddTaskListResponse{}, s.saveConfig(ctx, config)
+}
+
+func (s *Server) ChangeUpdate(ctx context.Context, req *pbgh.ChangeUpdateRequest) (*pb.ChangeUpdateResponse, error) {
+	return &pbgh.ChangeUpdateResponse{}, nil
 }
