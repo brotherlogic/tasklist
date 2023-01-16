@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"testing"
 
 	"golang.org/x/net/context"
@@ -160,7 +159,5 @@ func TestMoveToNextItemOnChange(t *testing.T) {
 	if number == 0 {
 		t.Errorf("Task was not updated: %v", lists)
 	}
-
-	log.Printf("Aha: %v", lists)
 
 }

@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/brotherlogic/dstore v0.0.0-20230108103035-94e9284d0601
-	github.com/brotherlogic/githubcard v0.0.0-20230116081124-a1bbf7fb0ac1
+	github.com/brotherlogic/githubcard v0.0.0-20230116083218-e5b2884d675b
 	github.com/brotherlogic/goserver v0.0.0-20230113190359-3aaa706170c9
 	github.com/prometheus/client_golang v1.14.0
 	golang.org/x/net v0.5.0
