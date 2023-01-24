@@ -83,9 +83,16 @@ func main() {
 		return
 	}
 
-	ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
-	server.readConfig(ctx)
-	cancel()
+	go func() {
+		ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
+		config, err := server.readConfig(ctx)
+		if err == nil {
+			server.validateLists(ctx, config)
+		}
+		cancel()
+
+		time.Sleep(time.Hour)
+	}()
 
 	fmt.Printf("%v", server.Serve())
 }
