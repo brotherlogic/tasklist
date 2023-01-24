@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"sort"
 
 	pbgh "github.com/brotherlogic/githubcard/proto"
@@ -23,6 +24,7 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 					Body:        item.GetTitle(),
 					Subscribers: []string{"tasklist"},
 				})
+				log.Printf("ADDING %v -> %v", item, err)
 				if err != nil {
 					return err
 				}
