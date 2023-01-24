@@ -207,6 +207,10 @@ func TestValidateCorrect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Cannot add task list: %v", err)
 	}
+	_, err = s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Initial validation failed: %v", err)
+	}
 
 	// First task should be ready to go
 	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
