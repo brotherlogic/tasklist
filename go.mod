@@ -1,10 +1,10 @@
 module github.com/brotherlogic/tasklist
 
-go 1.19
+go 1.18
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20230108103035-94e9284d0601
-	github.com/brotherlogic/githubcard v0.0.0-20230122175912-62f730788fc6
+	github.com/brotherlogic/dstore v0.0.0-20230123174636-131399911991
+	github.com/brotherlogic/githubcard v0.0.0-20230124163240-816f7c4a6ecb
 	github.com/brotherlogic/goserver v0.0.0-20230117181550-4c6661b17d53
 	github.com/prometheus/client_golang v1.14.0
 	golang.org/x/net v0.5.0
@@ -16,7 +16,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/brotherlogic/buildserver v0.0.0-20230120224430-00b38f0af590 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20230118231105-ee668be05973 // indirect
-	github.com/brotherlogic/discovery v0.0.0-20230120085916-540725c71489 // indirect
+	github.com/brotherlogic/discovery v0.0.0-20230124013835-acc24a684fd7 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20230117181720-516784a20890 // indirect
 	github.com/brotherlogic/keystore v0.0.0-20230108052654-392c7a9b9675 // indirect
 	github.com/brotherlogic/lock v0.0.0-20230122004702-040892524789 // indirect
@@ -41,5 +41,5 @@ require (
 	go.opentelemetry.io/otel/trace v1.11.2 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
-	google.golang.org/genproto v0.0.0-20230119192704-9d59e20e5cd1 // indirect
+	google.golang.org/genproto v0.0.0-20230124163310-31e0e69b6fc2 // indirect
 )
