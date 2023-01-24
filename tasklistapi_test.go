@@ -259,3 +259,14 @@ func TestValidateCorrect(t *testing.T) {
 		t.Errorf("Did not find task: %v", lists)
 	}
 }
+
+func TestValidateFailOnRead(t *testing.T) {
+	s := InitTestServer()
+	s.dclient.ErrorCode = make(map[string]codes.Code)
+	s.dclient.ErrorCode[CONFIG_KEY] = codes.DataLoss
+
+	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err == nil {
+		t.Errorf("Should have failed here: %v / %v", config, err)
+	}
+}
