@@ -85,12 +85,8 @@ func main() {
 
 	go func() {
 		ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
-		config, err := server.readConfig(ctx)
-		if err == nil {
-			server.validateLists(ctx, config)
-		}
+		server.ValidateTaskLists(ctx, &pb.ValidateTaskListsRequest{})
 		cancel()
-
 		time.Sleep(time.Hour)
 	}()
 

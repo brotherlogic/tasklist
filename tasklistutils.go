@@ -41,8 +41,6 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 }
 
 func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
-	updated := false
-
 	for _, list := range config.GetLists() {
 		for _, task := range list.GetTasks() {
 			if task.State == pb.Task_TASK_IN_PROGRESS {
@@ -59,15 +57,9 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 
 				if !found {
 					task.State = pb.Task_TASK_COMPLETE
-					updated = true
 				}
 			}
 		}
-	}
-
-	if updated {
-		s.processTaskLists(ctx, config)
-		return s.saveConfig(ctx, config)
 	}
 
 	return nil
