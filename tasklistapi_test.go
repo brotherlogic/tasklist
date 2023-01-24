@@ -270,3 +270,21 @@ func TestValidateFailOnRead(t *testing.T) {
 		t.Errorf("Should have failed here: %v / %v", config, err)
 	}
 }
+
+func TestValidateFailOnGetIssues(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	s.ghclient.ErrorCode = codes.DataLoss
+
+	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err == nil {
+		t.Errorf("Should have failed on issue read: %v / %v", config, err)
+	}
+}
