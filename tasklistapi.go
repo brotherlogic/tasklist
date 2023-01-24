@@ -106,3 +106,22 @@ func (s *Server) ChangeUpdate(ctx context.Context, req *pbgh.ChangeUpdateRequest
 	}
 	return nil, status.Errorf(codes.NotFound, "Issue %v/%v was not found", req.GetIssue().GetService(), req.GetIssue().GetNumber())
 }
+
+func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskListsRequest) (*pb.ValidateTaskListsResponse, error) {
+	config, err := s.readConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.validateLists(ctx, config)
+	if err != nil {
+		return &pb.ValidateTaskListsResponse{}, err
+	}
+
+	err = s.processTaskLists(ctx, config)
+	if err != nil {
+		return &pb.ValidateTaskListsResponse{}, err
+	}
+
+	return &pb.ValidateTaskListsResponse{}, s.saveConfig(ctx, config)
+}

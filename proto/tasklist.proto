@@ -40,7 +40,11 @@ message GetTaskListsResponse {
     repeated TaskList lists = 1;
 }
 
+message ValidateTaskListsRequest {}
+message ValidateTaskListsResponse {}
+
 service TaskListService {
     rpc AddTaskList (AddTaskListRequest) returns (AddTaskListResponse);
     rpc GetTaskLists (GetTaskListsRequest) returns (GetTaskListsResponse);
+    rpc ValidateTaskLists (ValidateTaskListsRequest) returns (ValidateTaskListsResponse);
   }

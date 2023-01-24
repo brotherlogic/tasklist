@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type TaskListServiceClient interface {
 	AddTaskList(ctx context.Context, in *AddTaskListRequest, opts ...grpc.CallOption) (*AddTaskListResponse, error)
 	GetTaskLists(ctx context.Context, in *GetTaskListsRequest, opts ...grpc.CallOption) (*GetTaskListsResponse, error)
+	ValidateTaskLists(ctx context.Context, in *ValidateTaskListsRequest, opts ...grpc.CallOption) (*ValidateTaskListsResponse, error)
 }
 
 type taskListServiceClient struct {
@@ -52,12 +53,22 @@ func (c *taskListServiceClient) GetTaskLists(ctx context.Context, in *GetTaskLis
 	return out, nil
 }
 
+func (c *taskListServiceClient) ValidateTaskLists(ctx context.Context, in *ValidateTaskListsRequest, opts ...grpc.CallOption) (*ValidateTaskListsResponse, error) {
+	out := new(ValidateTaskListsResponse)
+	err := c.cc.Invoke(ctx, "/tasklist.TaskListService/ValidateTaskLists", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskListServiceServer is the server API for TaskListService service.
 // All implementations should embed UnimplementedTaskListServiceServer
 // for forward compatibility
 type TaskListServiceServer interface {
 	AddTaskList(context.Context, *AddTaskListRequest) (*AddTaskListResponse, error)
 	GetTaskLists(context.Context, *GetTaskListsRequest) (*GetTaskListsResponse, error)
+	ValidateTaskLists(context.Context, *ValidateTaskListsRequest) (*ValidateTaskListsResponse, error)
 }
 
 // UnimplementedTaskListServiceServer should be embedded to have forward compatible implementations.
@@ -69,6 +80,9 @@ func (UnimplementedTaskListServiceServer) AddTaskList(context.Context, *AddTaskL
 }
 func (UnimplementedTaskListServiceServer) GetTaskLists(context.Context, *GetTaskListsRequest) (*GetTaskListsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTaskLists not implemented")
+}
+func (UnimplementedTaskListServiceServer) ValidateTaskLists(context.Context, *ValidateTaskListsRequest) (*ValidateTaskListsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateTaskLists not implemented")
 }
 
 // UnsafeTaskListServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -118,6 +132,24 @@ func _TaskListService_GetTaskLists_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskListService_ValidateTaskLists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateTaskListsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskListServiceServer).ValidateTaskLists(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tasklist.TaskListService/ValidateTaskLists",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskListServiceServer).ValidateTaskLists(ctx, req.(*ValidateTaskListsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskListService_ServiceDesc is the grpc.ServiceDesc for TaskListService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +164,10 @@ var TaskListService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTaskLists",
 			Handler:    _TaskListService_GetTaskLists_Handler,
+		},
+		{
+			MethodName: "ValidateTaskLists",
+			Handler:    _TaskListService_ValidateTaskLists_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

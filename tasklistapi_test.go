@@ -192,3 +192,140 @@ func TestBadLoad(t *testing.T) {
 		t.Errorf("Bad load not plubmed throug: %v", err)
 	}
 }
+
+func TestValidateCorrect(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err != nil {
+		t.Fatalf("Cannot add task list: %v", err)
+	}
+	_, err = s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Initial validation failed: %v", err)
+	}
+
+	// First task should be ready to go
+	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Could not get task lists: %v", err)
+	}
+	found := false
+	number := int32(0)
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.Title == "test1" {
+				found = true
+				if task.State != pb.Task_TASK_IN_PROGRESS {
+					t.Fatalf("First task should have been in progress: %v", task)
+				}
+				number = (task.GetIssueNumber())
+			}
+		}
+	}
+
+	if !found {
+		t.Fatalf("Task was not found: %v", lists)
+	}
+
+	//Mark the first task as complete
+	s.ghclient.DeleteIssue(context.Background(), &pbgh.DeleteRequest{Issue: &pbgh.Issue{Service: "home", Number: number}})
+
+	_, err = s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Could not validate: %v", err)
+	}
+
+	lists, err = s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Could not get task lists: %v", err)
+	}
+	found = false
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.Title == "test2" {
+				found = true
+				if task.State != pb.Task_TASK_IN_PROGRESS {
+					t.Errorf("Next Task should have been in progress: %v", list)
+				}
+			}
+		}
+	}
+
+	if !found {
+		t.Errorf("Did not find task: %v", lists)
+	}
+}
+
+func TestValidateFailOnRead(t *testing.T) {
+	s := InitTestServer()
+	s.dclient.ErrorCode = make(map[string]codes.Code)
+	s.dclient.ErrorCode[CONFIG_KEY] = codes.DataLoss
+
+	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err == nil {
+		t.Errorf("Should have failed here: %v / %v", config, err)
+	}
+}
+
+func TestValidateFailOnGetIssues(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	s.ghclient.ErrorCode = codes.DataLoss
+
+	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err == nil {
+		t.Errorf("Should have failed on issue read: %v / %v", config, err)
+	}
+}
+
+func TestValidateFailOnAddIssue(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	// First task should be ready to go
+	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Could not get task lists: %v", err)
+	}
+	number := int32(0)
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.Title == "test1" {
+				if task.State != pb.Task_TASK_IN_PROGRESS {
+					t.Fatalf("First task should have been in progress: %v", task)
+				}
+				number = (task.GetIssueNumber())
+			}
+		}
+	}
+
+	//Mark the first task as complete
+	s.ghclient.DeleteIssue(context.Background(), &pbgh.DeleteRequest{Issue: &pbgh.Issue{Service: "home", Number: number}})
+	s.ghclient.AddErrorCode = codes.DataLoss
+
+	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
+	if err == nil {
+		t.Errorf("Should have failed on issue read: %v / %v", config, err)
+	}
+}

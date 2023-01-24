@@ -39,3 +39,28 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 
 	return nil
 }
+
+func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
+	for _, list := range config.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.State == pb.Task_TASK_IN_PROGRESS {
+				found := false
+				issues, err := s.ghclient.GetIssues(ctx, &pbgh.GetAllRequest{})
+				if err != nil {
+					return err
+				}
+				for _, issue := range issues.GetIssues() {
+					if issue.GetService() == task.GetJob() && issue.GetNumber() == task.GetIssueNumber() {
+						found = true
+					}
+				}
+
+				if !found {
+					task.State = pb.Task_TASK_COMPLETE
+				}
+			}
+		}
+	}
+
+	return nil
+}
