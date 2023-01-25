@@ -85,7 +85,8 @@ func main() {
 
 	go func() {
 		ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
-		server.ValidateTaskLists(ctx, &pb.ValidateTaskListsRequest{})
+		_, err := server.ValidateTaskLists(ctx, &pb.ValidateTaskListsRequest{})
+		server.CtxLog(ctx, fmt.Sprintf("Validated task list: %v", err))
 		cancel()
 		time.Sleep(time.Hour)
 	}()
