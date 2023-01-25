@@ -118,6 +118,9 @@ func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskList
 		return &pb.ValidateTaskListsResponse{}, err
 	}
 
+	// Do a best effort save here since processing may well fail
+	s.saveConfig(ctx, config)
+
 	err = s.processTaskLists(ctx, config)
 	if err != nil {
 		return &pb.ValidateTaskListsResponse{}, err
