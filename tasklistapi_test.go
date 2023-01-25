@@ -329,3 +329,20 @@ func TestValidateFailOnAddIssue(t *testing.T) {
 		t.Errorf("Should have failed on issue read: %v / %v", config, err)
 	}
 }
+
+func TestValidateTaskListWithExistingIssue(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err != nil {
+		t.Errorf("This should have succeeded: %v", err)
+	}
+}
