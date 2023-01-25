@@ -50,7 +50,7 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 					return err
 				}
 				for _, issue := range issues.GetIssues() {
-					if issue.GetService() == task.GetJob() && issue.GetNumber() == task.GetIssueNumber() {
+					if issue.GetService() == task.GetJob() && issue.GetNumber() == task.GetIssueNumber() && issue.State != pbgh.Issue_CLOSED {
 						found = true
 					}
 				}
