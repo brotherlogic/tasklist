@@ -5,9 +5,26 @@ import (
 
 	pbgh "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/tasklist/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"golang.org/x/net/context"
 )
+
+func (s *Server) getIssueNumber(ctx context.Context, title, service string) (int32, error) {
+	issues, err := s.ghclient.GetIssues(ctx, &pbgh.GetAllRequest{})
+	if err != nil {
+		return -1, err
+	}
+
+	for _, issue := range issues.GetIssues() {
+		if issue.GetService() == service && issue.GetTitle() == title {
+			return issue.GetNumber(), nil
+		}
+	}
+
+	return -1, status.Errorf(codes.NotFound, "Could not find %v/%v", title, service)
+}
 
 func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 	for _, list := range config.GetLists() {
@@ -24,10 +41,20 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 					Subscribers: []string{"tasklist"},
 				})
 				if err != nil {
-					return err
+					if status.Code(err) == codes.AlreadyExists {
+						num, err := s.getIssueNumber(ctx, item.GetTitle(), item.GetJob())
+						if err != nil {
+							return err
+						}
+						item.State = pb.Task_TASK_IN_PROGRESS
+						item.IssueNumber = num
+					} else {
+						return err
+					}
+				} else {
+					item.State = pb.Task_TASK_IN_PROGRESS
+					item.IssueNumber = issue.GetNumber()
 				}
-				item.State = pb.Task_TASK_IN_PROGRESS
-				item.IssueNumber = issue.GetNumber()
 			}
 
 			// Stop at the first task in progress

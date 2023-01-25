@@ -329,3 +329,71 @@ func TestValidateFailOnAddIssue(t *testing.T) {
 		t.Errorf("Should have failed on issue read: %v / %v", config, err)
 	}
 }
+
+func TestValidateTaskListWithExistingIssue(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
+	s.ghclient.AddErrorCode = codes.AlreadyExists
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err != nil {
+		t.Fatalf("This should have succeeded: %v", err)
+	}
+
+	tasks, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get lists: %v", err)
+	}
+
+	for _, list := range tasks.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetTitle() == "test1" {
+				if task.GetIssueNumber() == 0 {
+					t.Errorf("Task should have number: %v", task)
+				}
+			}
+		}
+	}
+}
+
+func TestValidateTaskListWithExistingIssueButBadGet(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
+	s.ghclient.ErrorCode = codes.AlreadyExists
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err == nil {
+		t.Fatalf("This should not have succeeded: %v", err)
+	}
+}
+
+func TestValidateTaskListWithExistingIssueButNoIssueExistsHuh(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.AddErrorCode = codes.AlreadyExists
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err == nil {
+		t.Fatalf("This should not have succeeded: %v", err)
+	}
+}
