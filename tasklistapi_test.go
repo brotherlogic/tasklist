@@ -343,6 +343,21 @@ func TestValidateTaskListWithExistingIssue(t *testing.T) {
 	}})
 
 	if err != nil {
-		t.Errorf("This should have succeeded: %v", err)
+		t.Fatalf("This should have succeeded: %v", err)
+	}
+
+	tasks, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get lists: %v", err)
+	}
+
+	for _, list := range tasks.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetTitle() == "test1" {
+				if task.GetIssueNumber() == 0 {
+					t.Errorf("Task should have number: %v", task)
+				}
+			}
+		}
 	}
 }
