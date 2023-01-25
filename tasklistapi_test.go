@@ -333,6 +333,7 @@ func TestValidateFailOnAddIssue(t *testing.T) {
 func TestValidateTaskListWithExistingIssue(t *testing.T) {
 	s := InitTestServer()
 	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
+	s.ghclient.AddErrorCode = codes.AlreadyExists
 
 	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
 		Name: "TestingList",
