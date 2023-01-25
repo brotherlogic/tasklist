@@ -84,11 +84,13 @@ func main() {
 	}
 
 	go func() {
-		ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
-		_, err := server.ValidateTaskLists(ctx, &pb.ValidateTaskListsRequest{})
-		server.CtxLog(ctx, fmt.Sprintf("Validated task list: %v", err))
-		cancel()
-		time.Sleep(time.Hour)
+		for {
+			ctx, cancel := utils.ManualContext("tasklist-init", time.Minute)
+			_, err := server.ValidateTaskLists(ctx, &pb.ValidateTaskListsRequest{})
+			server.CtxLog(ctx, fmt.Sprintf("Validated task list: %v", err))
+			cancel()
+			time.Sleep(time.Hour)
+		}
 	}()
 
 	fmt.Printf("%v", server.Serve())
