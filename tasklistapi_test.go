@@ -362,3 +362,38 @@ func TestValidateTaskListWithExistingIssue(t *testing.T) {
 		}
 	}
 }
+
+func TestValidateTaskListWithExistingIssueButBadGet(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
+	s.ghclient.ErrorCode = codes.AlreadyExists
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err == nil {
+		t.Fatalf("This should not have succeeded: %v", err)
+	}
+}
+
+func TestValidateTaskListWithExistingIssueButNoIssueExistsHuh(t *testing.T) {
+	s := InitTestServer()
+	s.ghclient.AddErrorCode = codes.AlreadyExists
+
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "TestingList",
+		Tasks: []*pb.Task{
+			&pb.Task{Title: "test1", Job: "home"},
+			&pb.Task{Title: "test2", Job: "home"},
+		},
+	}})
+
+	if err == nil {
+		t.Fatalf("This should not have succeeded: %v", err)
+	}
+}
