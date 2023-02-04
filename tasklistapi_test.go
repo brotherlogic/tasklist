@@ -197,7 +197,9 @@ func TestValidateCorrect(t *testing.T) {
 	s := InitTestServer()
 
 	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "TestingList",
+		Name:        "TestingList",
+		Job:         "madeup",
+		IssueNumber: 213,
 		Tasks: []*pb.Task{
 			&pb.Task{Title: "test1", Job: "home"},
 			&pb.Task{Title: "test2", Job: "home"},
