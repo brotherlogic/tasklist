@@ -79,6 +79,11 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 		return nil, status.Errorf(codes.AlreadyExists, "%v already exists", req.GetAdd().GetName())
 	}
 
+	// No check delete issue if we've added one
+	if req.GetAdd().GetJob() != "" && req.GetAdd().GetIssueNumber() > 0 {
+		s.ghclient.DeleteIssue(ctx, &pbgh.DeleteRequest{Issue: &pbgh.Issue{Service: req.GetAdd().GetJob(), Number: req.GetAdd().GetIssueNumber()}})
+	}
+
 	config.Lists = append(config.Lists, req.GetAdd())
 
 	err = s.processTaskLists(ctx, config)

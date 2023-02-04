@@ -26,6 +26,9 @@ message Task {
 message TaskList {
     repeated Task tasks = 1;
     string name = 2;
+
+    string job = 3;
+    int32 issue_number = 4;
 }
 
 message AddTaskListRequest {
