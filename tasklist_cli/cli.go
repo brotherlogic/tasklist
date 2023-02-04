@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -48,7 +49,17 @@ func main() {
 		}
 
 		lines := strings.Split(string(data), "\n")
-		req := &pb.TaskList{Name: lines[0]}
+		elems := strings.Split(lines[0], "|")
+		var req *pb.TaskList
+		if len(elems) > 0 {
+			num, err := strconv.ParseInt(elems[2], 10, 32)
+			if err != nil {
+				log.Fatalf("Bad parse(%v): %v", lines[0], err)
+			}
+			req = &pb.TaskList{Name: elems[0], Job: elems[1], IssueNumber: int32(num)}
+		} else {
+			req = &pb.TaskList{Name: lines[0]}
+		}
 		for i := 1; i < len(lines); i++ {
 			if len(strings.TrimSpace(lines[i])) > 0 {
 				bits := strings.Split(lines[i], "|")
