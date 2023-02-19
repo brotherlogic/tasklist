@@ -51,7 +51,7 @@ func main() {
 		lines := strings.Split(string(data), "\n")
 		elems := strings.Split(lines[0], "|")
 		var req *pb.TaskList
-		if len(elems) > 0 {
+		if len(elems) > 1 {
 			num, err := strconv.ParseInt(elems[2], 10, 32)
 			if err != nil {
 				log.Fatalf("Bad parse(%v): %v", lines[0], err)
