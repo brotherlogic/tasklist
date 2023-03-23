@@ -52,6 +52,10 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 	return err
 }
 
+func (s *Server) RenameJob(ctx context.Context, req *pb.RenameJobRequest) (*pb.RenameJobResponse, error) {
+	return nil, nil
+}
+
 func (s *Server) GetTaskLists(ctx context.Context, req *pb.GetTaskListsRequest) (*pb.GetTaskListsResponse, error) {
 	config, err := s.readConfig(ctx)
 	if err != nil {
