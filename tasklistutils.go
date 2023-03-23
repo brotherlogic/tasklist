@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 
 	pbgh "github.com/brotherlogic/githubcard/proto"
@@ -49,6 +50,7 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 						item.State = pb.Task_TASK_IN_PROGRESS
 						item.IssueNumber = num
 					} else {
+						s.RaiseIssue("Bad issue add", fmt.Sprintf("Unable to add issue: %v", err))
 						return err
 					}
 				} else {
