@@ -52,6 +52,29 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 	return err
 }
 
+func (s *Server) RenameJob(ctx context.Context, req *pb.RenameJobRequest) (*pb.RenameJobResponse, error) {
+	data, err := s.readConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	changed := false
+	for _, list := range data.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetJob() == req.OldJob {
+				task.Job = req.NewJob
+				changed = true
+			}
+		}
+	}
+
+	if changed {
+		return &pb.RenameJobResponse{}, s.saveConfig(ctx, data)
+	}
+
+	return nil, status.Errorf(codes.NotFound, "Could not find instances of job %v", req.OldJob)
+}
+
 func (s *Server) GetTaskLists(ctx context.Context, req *pb.GetTaskListsRequest) (*pb.GetTaskListsResponse, error) {
 	config, err := s.readConfig(ctx)
 	if err != nil {

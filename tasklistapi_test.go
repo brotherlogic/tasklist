@@ -21,6 +21,39 @@ func InitTestServer() *Server {
 	return s
 }
 
+func TestRenameJob(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
+		Name: "Test",
+		Tasks: []*pb.Task{
+			{Title: "test",
+				Job: "donkey"},
+		},
+	}})
+
+	if err != nil {
+		t.Fatalf("Error in adding list: %v", err)
+	}
+
+	_, err = s.RenameJob(context.Background(), &pb.RenameJobRequest{OldJob: "donkey", NewJob: "zebra"})
+	if err != nil {
+		t.Fatalf("Bad job rename: %v", err)
+	}
+
+	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
+	if err != nil {
+		t.Fatalf("Bad get: %v", err)
+	}
+
+	for _, list := range lists.GetLists() {
+		for _, task := range list.GetTasks() {
+			if task.GetJob() == "donkey" {
+				t.Errorf("Job has not been renamed: %v", task)
+			}
+		}
+	}
+}
+
 func TestAddList(t *testing.T) {
 	s := InitTestServer()
 	s.dclient.ErrorCode = make(map[string]codes.Code)
