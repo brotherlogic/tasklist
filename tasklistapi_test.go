@@ -18,6 +18,7 @@ func InitTestServer() *Server {
 	s := Init()
 	s.dclient = &dstore_client.DStoreClient{Test: true}
 	s.ghclient = &github_client.GHClient{Test: true}
+	s.SkipIssue = true
 	return s
 }
 
