@@ -27,6 +27,12 @@ func main() {
 	client := pb.NewTaskListServiceClient(conn)
 
 	switch os.Args[1] {
+	case "rename":
+		_, err := client.RenameJob(ctx, &pb.RenameJobRequest{OldJob: os.Args[2], NewJob: os.Args[3]})
+		if err != nil {
+			log.Fatalf("Bad rename: %v", err)
+		}
+		fmt.Printf("Renamed %v -> %v\n", os.Args[2], os.Args[3])
 	case "get":
 		res, err := client.GetTaskLists(ctx, &pb.GetTaskListsRequest{})
 		if err != nil {
