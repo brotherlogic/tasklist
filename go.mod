@@ -3,28 +3,28 @@ module github.com/brotherlogic/tasklist
 go 1.18
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20230310230622-1f92892ce019
-	github.com/brotherlogic/githubcard v0.0.0-20230310221245-453c9ad4fe04
-	github.com/brotherlogic/goserver v0.0.0-20230309052710-27200cfe2365
+	github.com/brotherlogic/dstore v0.0.0-20230324233904-06f9042586bc
+	github.com/brotherlogic/githubcard v0.0.0-20230326032726-b2c83ff7b687
+	github.com/brotherlogic/goserver v0.0.0-20230330215506-65bad61eb180
 	github.com/prometheus/client_golang v1.14.0
 	golang.org/x/net v0.8.0
-	google.golang.org/grpc v1.53.0
-	google.golang.org/protobuf v1.29.1
+	google.golang.org/grpc v1.54.0
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20230311231258-4f20962054fc // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20230330213111-7a7af64121f3 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20230118231105-ee668be05973 // indirect
-	github.com/brotherlogic/discovery v0.0.0-20230311044803-ad842e36eaa1 // indirect
-	github.com/brotherlogic/gobuildslave v0.0.0-20230311231642-c3186c0f1c1e // indirect
-	github.com/brotherlogic/keystore v0.0.0-20230312000939-6611df8194cc // indirect
-	github.com/brotherlogic/lock v0.0.0-20230309175725-58d19ed1e882 // indirect
-	github.com/brotherlogic/logging v0.0.0-20230310041944-60fc93ad6d9a // indirect
+	github.com/brotherlogic/discovery v0.0.0-20230314231148-be93dd1fea01 // indirect
+	github.com/brotherlogic/gobuildslave v0.0.0-20230325231433-846bea5386e0 // indirect
+	github.com/brotherlogic/keystore v0.0.0-20230326024900-69b61a0e92d6 // indirect
+	github.com/brotherlogic/lock v0.0.0-20230330192634-a2eb46286dd3 // indirect
+	github.com/brotherlogic/logging v0.0.0-20230324234709-e22452965b17 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
@@ -39,5 +39,5 @@ require (
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
-	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
+	google.golang.org/genproto v0.0.0-20230330200707-38013875ee22 // indirect
 )

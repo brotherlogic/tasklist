@@ -26,6 +26,7 @@ type TaskListServiceClient interface {
 	GetTaskLists(ctx context.Context, in *GetTaskListsRequest, opts ...grpc.CallOption) (*GetTaskListsResponse, error)
 	ValidateTaskLists(ctx context.Context, in *ValidateTaskListsRequest, opts ...grpc.CallOption) (*ValidateTaskListsResponse, error)
 	GetTasks(ctx context.Context, in *GetTasksRequest, opts ...grpc.CallOption) (*GetTasksResponse, error)
+	RenameJob(ctx context.Context, in *RenameJobRequest, opts ...grpc.CallOption) (*RenameJobResponse, error)
 }
 
 type taskListServiceClient struct {
@@ -72,6 +73,15 @@ func (c *taskListServiceClient) GetTasks(ctx context.Context, in *GetTasksReques
 	return out, nil
 }
 
+func (c *taskListServiceClient) RenameJob(ctx context.Context, in *RenameJobRequest, opts ...grpc.CallOption) (*RenameJobResponse, error) {
+	out := new(RenameJobResponse)
+	err := c.cc.Invoke(ctx, "/tasklist.TaskListService/RenameJob", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskListServiceServer is the server API for TaskListService service.
 // All implementations should embed UnimplementedTaskListServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type TaskListServiceServer interface {
 	GetTaskLists(context.Context, *GetTaskListsRequest) (*GetTaskListsResponse, error)
 	ValidateTaskLists(context.Context, *ValidateTaskListsRequest) (*ValidateTaskListsResponse, error)
 	GetTasks(context.Context, *GetTasksRequest) (*GetTasksResponse, error)
+	RenameJob(context.Context, *RenameJobRequest) (*RenameJobResponse, error)
 }
 
 // UnimplementedTaskListServiceServer should be embedded to have forward compatible implementations.
@@ -97,6 +108,9 @@ func (UnimplementedTaskListServiceServer) ValidateTaskLists(context.Context, *Va
 }
 func (UnimplementedTaskListServiceServer) GetTasks(context.Context, *GetTasksRequest) (*GetTasksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTasks not implemented")
+}
+func (UnimplementedTaskListServiceServer) RenameJob(context.Context, *RenameJobRequest) (*RenameJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenameJob not implemented")
 }
 
 // UnsafeTaskListServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -182,6 +196,24 @@ func _TaskListService_GetTasks_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskListService_RenameJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenameJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskListServiceServer).RenameJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tasklist.TaskListService/RenameJob",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskListServiceServer).RenameJob(ctx, req.(*RenameJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskListService_ServiceDesc is the grpc.ServiceDesc for TaskListService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -204,6 +236,10 @@ var TaskListService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTasks",
 			Handler:    _TaskListService_GetTasks_Handler,
+		},
+		{
+			MethodName: "RenameJob",
+			Handler:    _TaskListService_RenameJob_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

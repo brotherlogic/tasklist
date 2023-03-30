@@ -55,9 +55,16 @@ message GetTasksResponse {
     repeated Task tasks = 1;
 }
 
+message RenameJobRequest {
+    string old_job = 1;
+    string new_job = 2;
+}
+message RenameJobResponse {}
+
 service TaskListService {
     rpc AddTaskList (AddTaskListRequest) returns (AddTaskListResponse);
     rpc GetTaskLists (GetTaskListsRequest) returns (GetTaskListsResponse);
     rpc ValidateTaskLists (ValidateTaskListsRequest) returns (ValidateTaskListsResponse);
     rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
+    rpc RenameJob (RenameJobRequest) returns (RenameJobResponse);
   }
