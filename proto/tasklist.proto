@@ -29,6 +29,7 @@ message TaskList {
 
     string job = 3;
     int32 issue_number = 4;
+    string tag = 5;
 }
 
 message AddTaskListRequest {
@@ -46,6 +47,14 @@ message GetTaskListsResponse {
 message ValidateTaskListsRequest {}
 message ValidateTaskListsResponse {}
 
+message GetTasksRequest {
+    repeated string tags = 1;
+}
+
+message GetTasksResponse {
+    repeated Task tasks = 1;
+}
+
 message RenameJobRequest {
     string old_job = 1;
     string new_job = 2;
@@ -56,5 +65,6 @@ service TaskListService {
     rpc AddTaskList (AddTaskListRequest) returns (AddTaskListResponse);
     rpc GetTaskLists (GetTaskListsRequest) returns (GetTaskListsResponse);
     rpc ValidateTaskLists (ValidateTaskListsRequest) returns (ValidateTaskListsResponse);
+    rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
     rpc RenameJob (RenameJobRequest) returns (RenameJobResponse);
   }

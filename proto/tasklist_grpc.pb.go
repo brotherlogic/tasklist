@@ -25,6 +25,7 @@ type TaskListServiceClient interface {
 	AddTaskList(ctx context.Context, in *AddTaskListRequest, opts ...grpc.CallOption) (*AddTaskListResponse, error)
 	GetTaskLists(ctx context.Context, in *GetTaskListsRequest, opts ...grpc.CallOption) (*GetTaskListsResponse, error)
 	ValidateTaskLists(ctx context.Context, in *ValidateTaskListsRequest, opts ...grpc.CallOption) (*ValidateTaskListsResponse, error)
+	GetTasks(ctx context.Context, in *GetTasksRequest, opts ...grpc.CallOption) (*GetTasksResponse, error)
 	RenameJob(ctx context.Context, in *RenameJobRequest, opts ...grpc.CallOption) (*RenameJobResponse, error)
 }
 
@@ -63,6 +64,15 @@ func (c *taskListServiceClient) ValidateTaskLists(ctx context.Context, in *Valid
 	return out, nil
 }
 
+func (c *taskListServiceClient) GetTasks(ctx context.Context, in *GetTasksRequest, opts ...grpc.CallOption) (*GetTasksResponse, error) {
+	out := new(GetTasksResponse)
+	err := c.cc.Invoke(ctx, "/tasklist.TaskListService/GetTasks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *taskListServiceClient) RenameJob(ctx context.Context, in *RenameJobRequest, opts ...grpc.CallOption) (*RenameJobResponse, error) {
 	out := new(RenameJobResponse)
 	err := c.cc.Invoke(ctx, "/tasklist.TaskListService/RenameJob", in, out, opts...)
@@ -79,6 +89,7 @@ type TaskListServiceServer interface {
 	AddTaskList(context.Context, *AddTaskListRequest) (*AddTaskListResponse, error)
 	GetTaskLists(context.Context, *GetTaskListsRequest) (*GetTaskListsResponse, error)
 	ValidateTaskLists(context.Context, *ValidateTaskListsRequest) (*ValidateTaskListsResponse, error)
+	GetTasks(context.Context, *GetTasksRequest) (*GetTasksResponse, error)
 	RenameJob(context.Context, *RenameJobRequest) (*RenameJobResponse, error)
 }
 
@@ -94,6 +105,9 @@ func (UnimplementedTaskListServiceServer) GetTaskLists(context.Context, *GetTask
 }
 func (UnimplementedTaskListServiceServer) ValidateTaskLists(context.Context, *ValidateTaskListsRequest) (*ValidateTaskListsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateTaskLists not implemented")
+}
+func (UnimplementedTaskListServiceServer) GetTasks(context.Context, *GetTasksRequest) (*GetTasksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTasks not implemented")
 }
 func (UnimplementedTaskListServiceServer) RenameJob(context.Context, *RenameJobRequest) (*RenameJobResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenameJob not implemented")
@@ -164,6 +178,24 @@ func _TaskListService_ValidateTaskLists_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskListService_GetTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTasksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskListServiceServer).GetTasks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tasklist.TaskListService/GetTasks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskListServiceServer).GetTasks(ctx, req.(*GetTasksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TaskListService_RenameJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RenameJobRequest)
 	if err := dec(in); err != nil {
@@ -200,6 +232,10 @@ var TaskListService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ValidateTaskLists",
 			Handler:    _TaskListService_ValidateTaskLists_Handler,
+		},
+		{
+			MethodName: "GetTasks",
+			Handler:    _TaskListService_GetTasks_Handler,
 		},
 		{
 			MethodName: "RenameJob",
