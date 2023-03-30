@@ -18,7 +18,7 @@ type TasklistClient struct {
 func (c *TasklistClient) GetTasks(ctx context.Context, in *pb.GetTasksRequest) (*pb.GetTasksResponse, error) {
 	if c.Test {
 		if c.ErrorCode != codes.OK {
-			return nil, status.Errorf(c.ErrorCode, "Forced Error")
+			return nil, status.Errorf(c.ErrorCode, "Forced error")
 		}
 		return &pb.GetTasksResponse{}, nil
 	}
