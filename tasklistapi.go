@@ -133,3 +133,30 @@ func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskList
 
 	return &pb.ValidateTaskListsResponse{}, s.saveConfig(ctx, config)
 }
+
+func (s *Server) GetTasks(ctx context.Context, req *pb.GetTasksRequest) (*pb.GetTasksResponse, error) {
+	config, err := s.readConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []*pb.Task
+	for _, list := range config.GetLists() {
+		found := false
+		for _, tag := range req.GetTags() {
+			if tag == list.GetTag() {
+				found = true
+			}
+		}
+
+		if found {
+			for _, task := range list.GetTasks() {
+				if task.GetState() == pb.Task_TASK_IN_PROGRESS {
+					tasks = append(tasks, task)
+				}
+			}
+		}
+	}
+
+	return &pb.GetTasksResponse{Tasks: tasks}, nil
+}
