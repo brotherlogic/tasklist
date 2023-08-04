@@ -43,9 +43,9 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 				})
 				if err != nil {
 					if status.Code(err) == codes.AlreadyExists {
-						num, err := s.getIssueNumber(ctx, item.GetTitle(), item.GetJob())
-						if err != nil {
-							return err
+						num, err2 := s.getIssueNumber(ctx, item.GetTitle(), item.GetJob())
+						if err2 != nil {
+							return fmt.Errorf("unable to get issue number %w from add err %v", err2, err)
 						}
 						item.State = pb.Task_TASK_IN_PROGRESS
 						item.IssueNumber = num
