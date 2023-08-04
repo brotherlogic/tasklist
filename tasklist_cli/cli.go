@@ -44,7 +44,7 @@ func main() {
 			} else if os.Args[2] == list.GetName() {
 				fmt.Printf("%v\n-----------\n", list.GetName())
 				for i, entry := range list.GetTasks() {
-					fmt.Printf("%v. %v [%v]\n", i, entry.GetTitle(), entry.GetState())
+					fmt.Printf("%v. %v [%v] (%v)\n", i, entry.GetTitle(), entry.GetState(), entry.GetJob())
 				}
 			}
 		}
@@ -62,7 +62,7 @@ func main() {
 			if err != nil {
 				log.Fatalf("Bad parse(%v): %v", lines[0], err)
 			}
-			req = &pb.TaskList{Name: elems[0], Job: elems[1], IssueNumber: int32(num)}
+			req = &pb.TaskList{Name: elems[0], Job: elems[1], IssueNumber: int32(num), Tag: elems[3]}
 		} else {
 			req = &pb.TaskList{Name: lines[0]}
 		}
