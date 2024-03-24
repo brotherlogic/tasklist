@@ -21,6 +21,9 @@ var (
 	lists = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "tasklist_lists",
 	})
+	closed = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "tasklist_closed",
+	})
 )
 
 func (s *Server) metrics(config *pb.Config) {
