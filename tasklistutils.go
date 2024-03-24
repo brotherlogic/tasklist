@@ -87,6 +87,7 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 				}
 
 				if !found {
+					closed.Inc()
 					task.State = pb.Task_TASK_COMPLETE
 				}
 			}
