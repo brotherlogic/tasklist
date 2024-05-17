@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	pbgh "github.com/brotherlogic/githubcard/proto"
+	ghbpb "github.com/brotherlogic/githubridge/proto"
 	pb "github.com/brotherlogic/tasklist/proto"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -13,14 +14,14 @@ import (
 )
 
 func (s *Server) getIssueNumber(ctx context.Context, title, service string) (int32, error) {
-	issues, err := s.ghclient.GetIssues(ctx, &pbgh.GetAllRequest{})
+	issues, err := s.ghclient.GetIssues(ctx, &ghbpb.GetIssuesRequest{})
 	if err != nil {
 		return -1, err
 	}
 
 	for _, issue := range issues.GetIssues() {
-		if issue.GetService() == service && issue.GetTitle() == title {
-			return issue.GetNumber(), nil
+		if issue.GetRepo() == service && issue.GetTitle() == title {
+			return int32(issue.GetId()), nil
 		}
 	}
 
@@ -35,11 +36,10 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 
 		for _, item := range list.GetTasks() {
 			if item.GetState() == pb.Task_UNKNOWN || item.GetState() == pb.Task_TASK_WAITING {
-				issue, err := s.ghclient.AddIssue(ctx, &pbgh.Issue{
-					Title:       item.GetTitle(),
-					Service:     item.GetJob(),
-					Body:        item.GetTitle(),
-					Subscribers: []string{"tasklist"},
+				issue, err := s.ghclient.CreateIssue(ctx, &ghbpb.CreateIssueRequest{
+					Title: item.GetTitle(),
+					Repo:  item.GetJob(),
+					Body:  item.GetTitle(),
 				})
 				if err != nil {
 					if status.Code(err) == codes.AlreadyExists {
@@ -57,7 +57,7 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 					}
 				} else {
 					item.State = pb.Task_TASK_IN_PROGRESS
-					item.IssueNumber = issue.GetNumber()
+					item.IssueNumber = int32(issue.GetIssueId())
 				}
 			}
 
@@ -76,12 +76,12 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 		for _, task := range list.GetTasks() {
 			if task.State == pb.Task_TASK_IN_PROGRESS {
 				found := false
-				issues, err := s.ghclient.GetIssues(ctx, &pbgh.GetAllRequest{})
+				issues, err := s.ghclient.GetIssues(ctx, &ghbpb.GetIssuesRequest{})
 				if err != nil {
 					return err
 				}
 				for _, issue := range issues.GetIssues() {
-					if issue.GetService() == task.GetJob() && issue.GetNumber() == task.GetIssueNumber() && issue.State != pbgh.Issue_CLOSED {
+					if issue.GetRepo() == task.GetJob() && int32(issue.GetId()) == task.GetIssueNumber() {
 						found = true
 					}
 				}

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 
 	dstore_client "github.com/brotherlogic/dstore/client"
-	github_client "github.com/brotherlogic/githubcard/client"
+	githubridgeclient "github.com/brotherlogic/githubridge/client"
 
 	pbgh "github.com/brotherlogic/githubcard/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
@@ -24,7 +24,7 @@ import (
 type Server struct {
 	*goserver.GoServer
 	dclient  *dstore_client.DStoreClient
-	ghclient *github_client.GHClient
+	ghclient githubridgeclient.GithubridgeClient
 }
 
 // Init builds the server
@@ -33,7 +33,11 @@ func Init() *Server {
 		GoServer: &goserver.GoServer{},
 	}
 	s.dclient = &dstore_client.DStoreClient{Gs: s.GoServer}
-	s.ghclient = &github_client.GHClient{Gs: s.GoServer}
+	client, err := githubridgeclient.GetClientInternal()
+	if err != nil {
+		panic(err)
+	}
+	s.ghclient = client
 	return s
 }
 
