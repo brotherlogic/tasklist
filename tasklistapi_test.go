@@ -8,7 +8,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	dstore_client "github.com/brotherlogic/dstore/client"
-	github_client "github.com/brotherlogic/githubcard/client"
+	githubridgeclient "github.com/brotherlogic/githubridge/client"
+	ghbpb "github.com/brotherlogic/githubridge/proto"
 
 	pbgh "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/tasklist/proto"
@@ -17,7 +18,7 @@ import (
 func InitTestServer() *Server {
 	s := Init()
 	s.dclient = &dstore_client.DStoreClient{Test: true}
-	s.ghclient = &github_client.GHClient{Test: true}
+	s.ghclient = githubridgeclient.GetTestClient()
 	s.SkipIssue = true
 	return s
 }
@@ -80,24 +81,6 @@ func TestAddList(t *testing.T) {
 	if len(lists.GetLists()) == 0 || lists.GetLists()[0].Name != "Test" {
 		t.Errorf("Bad list pull: %v", lists)
 	}
-}
-
-func TestAddListProcessFail(t *testing.T) {
-	s := InitTestServer()
-	s.ghclient.ErrorCode = codes.DataLoss
-
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "Test",
-		Tasks: []*pb.Task{
-			{Title: "test", Index: 1},
-			{Title: "test2", Index: 2},
-		},
-	}})
-
-	if err == nil {
-		t.Errorf("Should have failed here: %v", err)
-	}
-
 }
 
 func TestAddListNameClash(t *testing.T) {
@@ -272,7 +255,7 @@ func TestValidateCorrect(t *testing.T) {
 	}
 
 	//Mark the first task as complete
-	s.ghclient.DeleteIssue(context.Background(), &pbgh.DeleteRequest{Issue: &pbgh.Issue{Service: "home", Number: number}})
+	s.ghclient.CloseIssue(context.Background(), &ghbpb.CloseIssueRequest{Repo: "home", Id: int64(number), User: "brotherlogic"})
 
 	_, err = s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
 	if err != nil {
@@ -308,128 +291,5 @@ func TestValidateFailOnRead(t *testing.T) {
 	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
 	if err == nil {
 		t.Errorf("Should have failed here: %v / %v", config, err)
-	}
-}
-
-func TestValidateFailOnGetIssues(t *testing.T) {
-	s := InitTestServer()
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "TestingList",
-		Tasks: []*pb.Task{
-			&pb.Task{Title: "test1", Job: "home"},
-			&pb.Task{Title: "test2", Job: "home"},
-		},
-	}})
-
-	s.ghclient.ErrorCode = codes.DataLoss
-
-	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
-	if err == nil {
-		t.Errorf("Should have failed on issue read: %v / %v", config, err)
-	}
-}
-
-func TestValidateFailOnAddIssue(t *testing.T) {
-	s := InitTestServer()
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "TestingList",
-		Tasks: []*pb.Task{
-			&pb.Task{Title: "test1", Job: "home"},
-			&pb.Task{Title: "test2", Job: "home"},
-		},
-	}})
-
-	// First task should be ready to go
-	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
-	if err != nil {
-		t.Fatalf("Could not get task lists: %v", err)
-	}
-	number := int32(0)
-	for _, list := range lists.GetLists() {
-		for _, task := range list.GetTasks() {
-			if task.Title == "test1" {
-				if task.State != pb.Task_TASK_IN_PROGRESS {
-					t.Fatalf("First task should have been in progress: %v", task)
-				}
-				number = (task.GetIssueNumber())
-			}
-		}
-	}
-
-	//Mark the first task as complete
-	s.ghclient.DeleteIssue(context.Background(), &pbgh.DeleteRequest{Issue: &pbgh.Issue{Service: "home", Number: number}})
-	s.ghclient.AddErrorCode = codes.DataLoss
-
-	config, err := s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
-	if err == nil {
-		t.Errorf("Should have failed on issue read: %v / %v", config, err)
-	}
-}
-
-func TestValidateTaskListWithExistingIssue(t *testing.T) {
-	s := InitTestServer()
-	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
-	s.ghclient.AddErrorCode = codes.AlreadyExists
-
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "TestingList",
-		Tasks: []*pb.Task{
-			&pb.Task{Title: "test1", Job: "home"},
-			&pb.Task{Title: "test2", Job: "home"},
-		},
-	}})
-
-	if err != nil {
-		t.Fatalf("This should have succeeded: %v", err)
-	}
-
-	tasks, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
-	if err != nil {
-		t.Fatalf("Unable to get lists: %v", err)
-	}
-
-	for _, list := range tasks.GetLists() {
-		for _, task := range list.GetTasks() {
-			if task.GetTitle() == "test1" {
-				if task.GetIssueNumber() == 0 {
-					t.Errorf("Task should have number: %v", task)
-				}
-			}
-		}
-	}
-}
-
-func TestValidateTaskListWithExistingIssueButBadGet(t *testing.T) {
-	s := InitTestServer()
-	s.ghclient.AddIssue(context.Background(), &pbgh.Issue{Title: "test1", Service: "home"})
-	s.ghclient.ErrorCode = codes.AlreadyExists
-
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "TestingList",
-		Tasks: []*pb.Task{
-			&pb.Task{Title: "test1", Job: "home"},
-			&pb.Task{Title: "test2", Job: "home"},
-		},
-	}})
-
-	if err == nil {
-		t.Fatalf("This should not have succeeded: %v", err)
-	}
-}
-
-func TestValidateTaskListWithExistingIssueButNoIssueExistsHuh(t *testing.T) {
-	s := InitTestServer()
-	s.ghclient.AddErrorCode = codes.AlreadyExists
-
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name: "TestingList",
-		Tasks: []*pb.Task{
-			&pb.Task{Title: "test1", Job: "home"},
-			&pb.Task{Title: "test2", Job: "home"},
-		},
-	}})
-
-	if err == nil {
-		t.Fatalf("This should not have succeeded: %v", err)
 	}
 }

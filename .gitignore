@@ -2,3 +2,5 @@ tasklist
 tasklist_cli/tasklist_cli
 tasklist_cli/*.txt
 tasklist_cli/old/*.txt
+*~
+
