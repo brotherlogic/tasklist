@@ -18,6 +18,8 @@ github.com/brotherlogic/githubridge v0.2793.0 h1:NEdpsy1bp1HRQz2F+N7PyB+0pGX+1R5
 github.com/brotherlogic/githubridge v0.2793.0/go.mod h1:XTxap90/th23AU2BWYFxnSyiQFwDYyBI0PWxDZTCQpo=
 github.com/brotherlogic/githubridge v0.2794.0 h1:Lkdw2IV2Vib78dBibLVrzeIT+kKJp+uNohQf/qcOnjU=
 github.com/brotherlogic/githubridge v0.2794.0/go.mod h1:XTxap90/th23AU2BWYFxnSyiQFwDYyBI0PWxDZTCQpo=
+github.com/brotherlogic/githubridge v0.2796.0 h1:M8Snjgz+sz1GZ+rVFt5GhYUFSxeIF7h2JFGcVWcvgOQ=
+github.com/brotherlogic/githubridge v0.2796.0/go.mod h1:XTxap90/th23AU2BWYFxnSyiQFwDYyBI0PWxDZTCQpo=
 github.com/brotherlogic/gobuildslave v0.0.0-20240507133920-b5373b5fedad h1:CsEM24Xs79S4eQwCNaP1GrGw+c44KNnO0JlTAbiFif0=
 github.com/brotherlogic/gobuildslave v0.0.0-20240507133920-b5373b5fedad/go.mod h1:QhXs5Gxj2nYsovAi1l6qT9MwG5Y0wt7xWj75shcpZ2M=
 github.com/brotherlogic/gobuildslave v0.0.0-20240516232214-6e96f0f59cd6 h1:TDD0MfqChxsXW0IglipZsU9SSDugydtRn2Vzpfg2mFg=

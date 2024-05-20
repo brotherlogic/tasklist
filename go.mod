@@ -7,7 +7,7 @@ toolchain go1.22.1
 require (
 	github.com/brotherlogic/dstore v0.0.0-20240513141202-4397254af04a
 	github.com/brotherlogic/githubcard v0.0.0-20240517133742-a54f22bea215
-	github.com/brotherlogic/githubridge v0.2794.0
+	github.com/brotherlogic/githubridge v0.2796.0
 	github.com/brotherlogic/goserver v0.0.0-20240303220030-80da220f0393
 	github.com/prometheus/client_golang v1.19.1
 	golang.org/x/net v0.25.0
