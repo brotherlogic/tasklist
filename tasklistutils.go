@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sort"
 
 	ghbpb "github.com/brotherlogic/githubridge/proto"
@@ -80,6 +81,9 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 				if err != nil {
 					return err
 				}
+
+				log.Printf("Debug: %v -> %v", issues, task)
+
 				for _, issue := range issues.GetIssues() {
 					if issue.GetRepo() == task.GetJob() && int32(issue.GetId()) == task.GetIssueNumber() {
 						found = true
