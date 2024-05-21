@@ -80,6 +80,7 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 				if err != nil {
 					return err
 				}
+
 				for _, issue := range issues.GetIssues() {
 					if issue.GetRepo() == task.GetJob() && int32(issue.GetId()) == task.GetIssueNumber() {
 						found = true
