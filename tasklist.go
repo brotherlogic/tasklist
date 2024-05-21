@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"github.com/brotherlogic/goserver"
@@ -33,7 +34,16 @@ func Init() *Server {
 		GoServer: &goserver.GoServer{},
 	}
 	s.dclient = &dstore_client.DStoreClient{Gs: s.GoServer}
-	client, err := githubridgeclient.GetClientInternal()
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	password, err := os.ReadFile(fmt.Sprintf("%v/.ghb", dirname))
+	if err != nil {
+		log.Fatalf("Can't read token: %v", err)
+	}
+
+	client, err := githubridgeclient.GetClientExternal(string(password))
 	if err != nil {
 		panic(err)
 	}
