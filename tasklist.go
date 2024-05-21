@@ -39,15 +39,13 @@ func Init() *Server {
 		log.Fatal(err)
 	}
 	password, err := os.ReadFile(fmt.Sprintf("%v/.ghb", dirname))
-	if err != nil {
-		log.Fatalf("Can't read token: %v", err)
+	if err == nil {
+		client, err := githubridgeclient.GetClientExternal(string(password))
+		if err != nil {
+			panic(err)
+		}
+		s.ghclient = client
 	}
-
-	client, err := githubridgeclient.GetClientExternal(string(password))
-	if err != nil {
-		panic(err)
-	}
-	s.ghclient = client
 	return s
 }
 
