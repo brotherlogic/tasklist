@@ -40,6 +40,7 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 					Title: item.GetTitle(),
 					Repo:  item.GetJob(),
 					Body:  item.GetTitle(),
+					User:  "brotherlogic",
 				})
 				if err != nil {
 					if status.Code(err) == codes.AlreadyExists {
