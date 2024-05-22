@@ -51,7 +51,7 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 						item.IssueNumber = num
 					} else {
 						if status.Code(err) != codes.ResourceExhausted {
-							s.RaiseIssue("Bad issue add", fmt.Sprintf("Unable to add issue: %v", err))
+							s.RaiseIssue("Bad issue add", fmt.Sprintf("Unable to add issue: %v (%v)", err, item))
 							return err
 						}
 					}
