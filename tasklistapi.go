@@ -25,10 +25,28 @@ var (
 	closed = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "tasklist_closed",
 	})
+
+	activeLists = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "tasklist_active_lists",
+	})
 )
+
+func getActiveLists(config *pb.Config) int32 {
+	count := int32(0)
+	for _, list := range config.GetLists() {
+		for _, entry := range list.GetTasks() {
+			if entry.GetState() != pb.Task_TASK_COMPLETE {
+				count++
+				break
+			}
+		}
+	}
+	return count
+}
 
 func (s *Server) metrics(config *pb.Config) {
 	lists.Set(float64(len(config.GetLists())))
+	activeLists.Set(float64(getActiveLists(config)))
 }
 
 func (s *Server) readConfig(ctx context.Context) (*pb.Config, error) {
@@ -106,7 +124,7 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 		return nil, status.Errorf(codes.AlreadyExists, "%v already exists", req.GetAdd().GetName())
 	}
 
-	if len(config.Lists) >= 3 {
+	if getActiveLists(config) >= 3 {
 		return nil, status.Errorf(codes.FailedPrecondition, "You have %v lists running, the limit is 3", len(config.Lists))
 	}
 
