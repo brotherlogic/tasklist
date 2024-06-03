@@ -106,6 +106,10 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 		return nil, status.Errorf(codes.AlreadyExists, "%v already exists", req.GetAdd().GetName())
 	}
 
+	if len(config.Lists) >= 3 {
+		return nil, status.Errorf(codes.FailedPrecondition, "You have %v lists running, the limit is 3", len(config.Lists))
+	}
+
 	// No check delete issue if we've added one
 	if req.GetAdd().GetJob() != "" && req.GetAdd().GetIssueNumber() > 0 {
 		s.ghclient.CloseIssue(ctx, &ghbpb.CloseIssueRequest{User: "brotherlogic", Repo: req.GetAdd().GetJob(), Id: int64(req.GetAdd().GetIssueNumber())})
