@@ -6,6 +6,7 @@ option go_package = "github.com/brotherlogic/tasklist/proto";
 
 message Config {
     repeated TaskList lists = 1;
+    int32 tracking_issue = 2;
 }
 
 message Task {
