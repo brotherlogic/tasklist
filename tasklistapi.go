@@ -199,7 +199,7 @@ func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskList
 		}
 	}
 
-	if config.GetTrackingIssue() > 0 {
+	if config.GetTrackingIssue() > 0 && getActiveLists(config) >= 3 {
 		err := s.DeleteIssue(ctx, config.GetTrackingIssue())
 		if err != nil {
 			return nil, err
