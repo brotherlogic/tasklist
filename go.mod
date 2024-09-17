@@ -6,10 +6,10 @@ toolchain go1.23.0
 
 require (
 	github.com/brotherlogic/dstore v0.0.0-20240913202500-2ab49ac6843c
-	github.com/brotherlogic/githubcard v0.0.0-20240909200244-54b5c200c3a1
+	github.com/brotherlogic/githubcard v0.0.0-20240916201536-50c552fbd34a
 	github.com/brotherlogic/githubridge v0.2802.0
 	github.com/brotherlogic/goserver v0.0.0-20240826215223-fccbac46b3d4
-	github.com/prometheus/client_golang v1.20.3
+	github.com/prometheus/client_golang v1.20.4
 	golang.org/x/net v0.29.0
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
@@ -22,7 +22,7 @@ require (
 	github.com/brotherlogic/discovery v0.0.0-20240914152846-5c4eeb33bef7 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20240916033825-be73f9f949be // indirect
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 // indirect
-	github.com/brotherlogic/lock v0.0.0-20240909170022-52a0b01464ac // indirect
+	github.com/brotherlogic/lock v0.0.0-20240916170722-87c467c50e96 // indirect
 	github.com/brotherlogic/logging v0.0.0-20240913212511-c3c5216a87b5 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
