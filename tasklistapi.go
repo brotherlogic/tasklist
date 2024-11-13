@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -186,7 +184,7 @@ func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskList
 		return &pb.ValidateTaskListsResponse{}, err
 	}
 
-	s.CtxLog(ctx, fmt.Sprintf("Running %v active lists", getActiveLists(config)))
+	/*s.CtxLog(ctx, fmt.Sprintf("Running %v active lists", getActiveLists(config)))
 	if getActiveLists(config) < 3 {
 		issue, err := s.ImmediateIssue(ctx, "You need to add a list", fmt.Sprintf("You only have %v lists currently", getActiveLists(config)), false, false)
 		if err != nil {
@@ -197,7 +195,7 @@ func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskList
 		if err != nil {
 			return nil, err
 		}
-	}
+	}*/
 
 	if config.GetTrackingIssue() > 0 && getActiveLists(config) >= 3 {
 		err := s.DeleteIssue(ctx, config.GetTrackingIssue())
