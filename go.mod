@@ -3,8 +3,8 @@ module github.com/brotherlogic/tasklist
 go 1.23.2
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20241228060702-a1a57faacda5
-	github.com/brotherlogic/githubcard v0.0.0-20241228075952-513f24d43739
+	github.com/brotherlogic/dstore v0.0.0-20241228100731-9585155e9449
+	github.com/brotherlogic/githubcard v0.0.0-20241228090107-36e533ab4428
 	github.com/brotherlogic/githubridge v0.2824.0
 	github.com/brotherlogic/goserver v0.0.0-20240826215223-fccbac46b3d4
 	github.com/prometheus/client_golang v1.20.5
