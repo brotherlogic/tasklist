@@ -59,6 +59,13 @@ func (s Server) processTaskLists(ctx context.Context, config *pb.Config) error {
 				} else {
 					item.State = pb.Task_TASK_IN_PROGRESS
 					item.IssueNumber = int32(issue.GetIssueId())
+
+					s.ghclient.AddLabel(ctx, &ghbpb.AddLabelRequest{
+						Repo:  item.GetJob(),
+						User:  "brotherlogic",
+						Id:    int32(issue.GetIssueId()),
+						Label: "task",
+					})
 				}
 			}
 
