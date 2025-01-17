@@ -140,6 +140,18 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 		return nil, err
 	}
 
+	if config.GetTrackingIssue() > 0 && getActiveLists(config) >= 3 {
+		err := s.DeleteIssue(ctx, config.GetTrackingIssue())
+		if err != nil {
+			return nil, err
+		}
+		config.TrackingIssue = 0
+		err = s.saveConfig(ctx, config)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &pb.AddTaskListResponse{}, s.saveConfig(ctx, config)
 }
 
@@ -170,6 +182,31 @@ func (s *Server) ValidateTaskLists(ctx context.Context, req *pb.ValidateTaskList
 	err = s.validateLists(ctx, config)
 	if err != nil {
 		return &pb.ValidateTaskListsResponse{}, err
+	}
+
+	/*s.CtxLog(ctx, fmt.Sprintf("Running %v active lists", getActiveLists(config)))
+	if getActiveLists(config) < 3 {
+		issue, err := s.ImmediateIssue(ctx, "You need to add a list", fmt.Sprintf("You only have %v lists currently", getActiveLists(config)), false, false)
+		if err != nil {
+			return nil, err
+		}
+		config.TrackingIssue = issue.GetNumber()
+		err = s.saveConfig(ctx, config)
+		if err != nil {
+			return nil, err
+		}
+	}*/
+
+	if config.GetTrackingIssue() > 0 && getActiveLists(config) >= 3 {
+		err := s.DeleteIssue(ctx, config.GetTrackingIssue())
+		if err != nil {
+			return nil, err
+		}
+		config.TrackingIssue = 0
+		err = s.saveConfig(ctx, config)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Do a best effort save here since processing may well fail
