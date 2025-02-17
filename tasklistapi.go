@@ -124,9 +124,9 @@ func (s *Server) AddTaskList(ctx context.Context, req *pb.AddTaskListRequest) (*
 		return nil, status.Errorf(codes.AlreadyExists, "%v already exists", req.GetAdd().GetName())
 	}
 
-	if getActiveLists(config) >= 3 {
-		return nil, status.Errorf(codes.FailedPrecondition, "You have %v lists running, the limit is 3", len(config.Lists))
-	}
+	//if getActiveLists(config) >= 3 {
+	//	return nil, status.Errorf(codes.FailedPrecondition, "You have %v lists running, the limit is 3", len(config.Lists))
+	//}
 
 	// No check delete issue if we've added one
 	if req.GetAdd().GetJob() != "" && req.GetAdd().GetIssueNumber() > 0 {
