@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	github.com/brotherlogic/dstore v0.0.0-20250529051141-593989409c04
-	github.com/brotherlogic/githubcard v0.0.0-20250531222829-0d3b44144cc2
+	github.com/brotherlogic/githubcard v0.0.0-20250601023009-e945fe0721ef
 	github.com/brotherlogic/githubridge v0.2859.0
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/prometheus/client_golang v1.22.0
