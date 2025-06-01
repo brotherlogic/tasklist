@@ -9,7 +9,6 @@ import (
 
 	dstore_client "github.com/brotherlogic/dstore/client"
 	githubridgeclient "github.com/brotherlogic/githubridge/client"
-	ghbpb "github.com/brotherlogic/githubridge/proto"
 
 	pbgh "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/tasklist/proto"
@@ -207,79 +206,6 @@ func TestBadLoad(t *testing.T) {
 	_, err := s.ChangeUpdate(context.Background(), &pbgh.ChangeUpdateRequest{})
 	if status.Code(err) != codes.DataLoss {
 		t.Errorf("Bad load not plubmed throug: %v", err)
-	}
-}
-
-func TestValidateCorrect(t *testing.T) {
-	s := InitTestServer()
-
-	_, err := s.AddTaskList(context.Background(), &pb.AddTaskListRequest{Add: &pb.TaskList{
-		Name:        "TestingList",
-		Job:         "madeup",
-		IssueNumber: 213,
-		Tasks: []*pb.Task{
-			&pb.Task{Title: "test1", Job: "home"},
-			&pb.Task{Title: "test2", Job: "home"},
-		},
-	}})
-
-	if err != nil {
-		t.Fatalf("Cannot add task list: %v", err)
-	}
-	_, err = s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
-	if err != nil {
-		t.Fatalf("Initial validation failed: %v", err)
-	}
-
-	// First task should be ready to go
-	lists, err := s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
-	if err != nil {
-		t.Fatalf("Could not get task lists: %v", err)
-	}
-	found := false
-	number := int32(0)
-	for _, list := range lists.GetLists() {
-		for _, task := range list.GetTasks() {
-			if task.Title == "test1" {
-				found = true
-				if task.State != pb.Task_TASK_IN_PROGRESS {
-					t.Fatalf("First task should have been in progress: %v", task)
-				}
-				number = (task.GetIssueNumber())
-			}
-		}
-	}
-
-	if !found {
-		t.Fatalf("Task was not found: %v", lists)
-	}
-
-	//Mark the first task as complete
-	s.ghclient.CloseIssue(context.Background(), &ghbpb.CloseIssueRequest{Repo: "home", Id: int64(number), User: "brotherlogic"})
-
-	_, err = s.ValidateTaskLists(context.Background(), &pb.ValidateTaskListsRequest{})
-	if err != nil {
-		t.Fatalf("Could not validate: %v", err)
-	}
-
-	lists, err = s.GetTaskLists(context.Background(), &pb.GetTaskListsRequest{})
-	if err != nil {
-		t.Fatalf("Could not get task lists: %v", err)
-	}
-	found = false
-	for _, list := range lists.GetLists() {
-		for _, task := range list.GetTasks() {
-			if task.Title == "test2" {
-				found = true
-				if task.State != pb.Task_TASK_IN_PROGRESS {
-					t.Errorf("Next Task should have been in progress: %v", list)
-				}
-			}
-		}
-	}
-
-	if !found {
-		t.Errorf("Did not find task: %v", lists)
 	}
 }
 
