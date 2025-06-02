@@ -91,6 +91,7 @@ func (s *Server) validateLists(ctx context.Context, config *pb.Config) error {
 
 				for _, issue := range issues.GetIssues() {
 					if issue.GetRepo() == task.GetJob() && int32(issue.GetId()) == task.GetIssueNumber() && issue.GetState() == ghbpb.IssueState_ISSUE_STATE_OPEN {
+						s.CtxLog(ctx, fmt.Sprintf("FOUND %v as %v", task, issue))
 						found = true
 					}
 				}
